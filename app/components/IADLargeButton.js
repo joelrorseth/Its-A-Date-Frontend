@@ -12,6 +12,7 @@ export default class IADLargeButton extends React.Component {
       <Button 
         title={this.props.title}
         color={(this.props.color ? this.props.color : 'blue')}
+        onPress={this.props.onPress}
       />
     );
   }

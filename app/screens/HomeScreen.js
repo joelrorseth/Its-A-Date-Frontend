@@ -48,10 +48,12 @@ export default class HomeScreen extends React.Component {
         </View>
         <View style={styles.buttonsView}>
           <View style={styles.buttonView}>
-            <IADLargeButton title="Find a Date" color="white"/>
+            <IADLargeButton title="Find a Date" color="white"
+              onPress={() => this.props.navigation.navigate('FindDate')}/>
           </View>
           <View style={styles.buttonView}>
-            <IADLargeButton title="Review a Date" color="white"/>
+            <IADLargeButton title="Review a Date" color="white"
+              onPress={() => this.props.navigation.navigate('ReviewDate')}/>
           </View>
         </View>
         <View style={{flex: 3}}/>
