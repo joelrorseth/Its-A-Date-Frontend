@@ -1,15 +1,43 @@
 import React from 'react';
-import { FlatList, ActivityIndicator, Text, View  } from 'react-native';
+import { StyleSheet, FlatList, TouchableWithoutFeedback, Text, View  } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import axios from 'axios';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#c0dae8',
+  },
+  searchBarContainer: {
+    backgroundColor: 'white',
+    width: '100%',
+  },
+  searchBarInputContainer: {
+    backgroundColor: '#c0dae8',
+  },
+  rowContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 14,
+  },
+  rowTitle: {
+    fontWeight: '300',
+    fontSize: 16,
+  },
+  rowSubtitle: {
+    color: 'grey',
+    fontSize: 12,
+  },
+});
 
 export default class ReviewDateScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { results: [], searchText: "", isLoading: true, counter: 0, timeout: null };
+    this.state = { results: [], searchText: "", isLoading: true, timeout: null };
     this.searchBarOnChangeText = this.searchBarOnChangeText.bind(this);
     this.searchForPlace = this.searchForPlace.bind(this);
+    this.rowOnSelect = this.rowOnSelect.bind(this);
   }
 
   componentWillUnmount() {
@@ -45,23 +73,38 @@ export default class ReviewDateScreen extends React.Component {
     }).then(response => {
       // Update the FlatList to show results
       console.log(response.data.candidates);
-      this.setState({ results: response.data.candidates, counter: (this.state.counter + 1) });
+      this.setState({ results: response.data.candidates });
     });
+  }
+
+  // Handler for row selection
+  rowOnSelect(selectedResult) {
+    this.setState({ results: [] });
   }
 
   // Component render implementation.
   render() {
     return (
-      <View>
-        <Text>API Calls: {this.state.counter}</Text>
+      <View style={styles.container}>
         <SearchBar
+          lightTheme
+          containerStyle={styles.searchBarContainer}
+          inputContainerStyle={styles.searchBarInputContainer}
           onChangeText={this.searchBarOnChangeText}
           onClear={this.searchBarDidChangeText}
           placeholder='Search for a location...' />
         <FlatList
           data={this.state.results}
-          renderItem={({item}) => <Text>{item.name}, {item.formatted_address}</Text>}
+          renderItem={({item}) => 
+            <TouchableWithoutFeedback onPress={(_) => this.rowOnSelect(item)}>
+              <View style={styles.rowContainer}>
+                <Text style={styles.rowTitle}>{item.name}</Text>
+                <Text style={styles.rowSubtitle}>{item.formatted_address}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          }
           keyExtractor={(item, _) => item.place_id}
+          keyboardShouldPersistTaps='always'
         />
       </View>
     );
