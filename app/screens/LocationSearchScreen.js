@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, FlatList, TouchableWithoutFeedback, Text, View  } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import IADTableView from '../components/IADTableView';
 import axios from 'axios';
 
 const styles = StyleSheet.create({
@@ -15,19 +16,6 @@ const styles = StyleSheet.create({
   searchBarInputContainer: {
     backgroundColor: '#c0dae8',
   },
-  rowContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    padding: 14,
-  },
-  rowTitle: {
-    fontWeight: '300',
-    fontSize: 16,
-  },
-  rowSubtitle: {
-    color: 'grey',
-    fontSize: 12,
-  },
 });
 
 export default class LocationSearchScreen extends React.Component {
@@ -37,7 +25,7 @@ export default class LocationSearchScreen extends React.Component {
     this.state = { results: [], searchText: "", isLoading: true, timeout: null };
     this.searchBarOnChangeText = this.searchBarOnChangeText.bind(this);
     this.searchForPlace = this.searchForPlace.bind(this);
-    this.rowOnSelect = this.rowOnSelect.bind(this);
+    this.onRowSelect = this.onRowSelect.bind(this);
   }
 
   componentWillUnmount() {
@@ -78,7 +66,7 @@ export default class LocationSearchScreen extends React.Component {
   }
 
   // Handler for row selection
-  rowOnSelect(selectedResult) {
+  onRowSelect(selectedResult) {
     this.props.navigation.state.params.onFinish(selectedResult);
     this.props.navigation.goBack();
   }
@@ -94,19 +82,8 @@ export default class LocationSearchScreen extends React.Component {
           onChangeText={this.searchBarOnChangeText}
           onClear={this.searchBarDidChangeText}
           placeholder='Search for a location...' />
-        <FlatList
-          data={this.state.results}
-          renderItem={({item}) => 
-            <TouchableWithoutFeedback onPress={(_) => this.rowOnSelect(item)}>
-              <View style={styles.rowContainer}>
-                <Text style={styles.rowTitle}>{item.name}</Text>
-                <Text style={styles.rowSubtitle}>{item.formatted_address}</Text>
-              </View>
-            </TouchableWithoutFeedback>
-          }
-          keyExtractor={(item, _) => item.place_id}
-          keyboardShouldPersistTaps='always'
-        />
+        <IADTableView data={this.state.results} titleKey="name" 
+          subtitleKey="formatted_address" onRowSelect={this.onRowSelect}/>
       </View>
     );
   }

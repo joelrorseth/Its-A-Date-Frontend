@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableWithoutFeedback, Text, TextInput, View  } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import { StyleSheet, Text, TextInput, View  } from 'react-native';
+import IADTableView from '../components/IADTableView';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,6 +23,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   formEntryTitle: {
+    fontWeight: '600',
     width: '85%',
     padding: 6,
   },
@@ -37,7 +39,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 8,
     borderColor: 'grey',
-    borderWidth: 1,
+    borderWidth: 0.2,
   },
 });
 
@@ -51,8 +53,6 @@ export default class ReviewDateScreen extends React.Component {
   }
 
   onPressAddLocation() {
-    console.log("PRESSED");
-    //this.props.navigation.navigate('LocationSearch');
     this.props.navigation.push('LocationSearch', 
       {
         onFinish: this.onFinishAddLocation,
@@ -62,7 +62,6 @@ export default class ReviewDateScreen extends React.Component {
   }
 
   onFinishAddLocation(location) {
-    console.log("Updated!");
     this.setState(prevState => ({
       taggedLocations: [...prevState.taggedLocations, location]
     }))
@@ -90,19 +89,8 @@ export default class ReviewDateScreen extends React.Component {
             <Text style={styles.formEntryTitle}>Tagged Locations</Text>
               <Icon style={styles.formEntryRightIcon} name='plus' onPress={this.onPressAddLocation}/>
           </View>
-          <FlatList
-            data={this.state.taggedLocations}
-            renderItem={({item}) => 
-              <TouchableWithoutFeedback onPress={(_) => this.rowOnSelect(item)}>
-                <View style={styles.rowContainer}>
-                  <Text style={styles.rowTitle}>{item.name}</Text>
-                  <Text style={styles.rowSubtitle}>{item.formatted_address}</Text>
-                </View>
-              </TouchableWithoutFeedback>
-            }
-            keyExtractor={(item, _) => item.place_id}
-            keyboardShouldPersistTaps='always'
-          />
+          <IADTableView data={this.state.taggedLocations} titleKey="name" 
+            subtitleKey="formatted_address"/>
         </View>
       </View>
     );
