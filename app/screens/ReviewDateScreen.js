@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 10,
     marginBottom: 10,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   formEntryTitleContainer: {
     flexDirection: 'row',
@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 4,
     padding: 10,
-    height: 40,
     borderRadius: 8,
     borderColor: 'grey',
     borderWidth: 0.2,
@@ -47,7 +46,7 @@ export default class ReviewDateScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { dateTitle: "", taggedLocations: [] };
+    this.state = { dateTitle: "", dateComment: "", taggedLocations: [] };
     this.onPressAddLocation = this.onPressAddLocation.bind(this);
     this.onFinishAddLocation = this.onFinishAddLocation.bind(this);
   }
@@ -91,6 +90,19 @@ export default class ReviewDateScreen extends React.Component {
           </View>
           <IADTableView data={this.state.taggedLocations} titleKey="name" 
             subtitleKey="formatted_address"/>
+        </View>
+        <View style={styles.formEntryContainer}>
+          <View style={styles.formEntryTitleContainer}>
+            <Text style={styles.formEntryTitle}>Comment</Text>
+          </View>
+          <TextInput
+            style={styles.formEntryInput}
+            multiline={true}
+            numberOfLines={4}
+            onChangeText={(text) => this.setState({ dateComment: text })}
+            placeholder="Describe your date..."
+            value={this.state.dateComment}
+          />
         </View>
       </View>
     );

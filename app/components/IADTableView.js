@@ -46,7 +46,7 @@ export default class IADTableView extends React.Component {
               </View>
             </TouchableWithoutFeedback>
           }
-          keyExtractor={(item, index) => index}
+          keyExtractor={(item, index) => item+index}
           keyboardShouldPersistTaps='always'
         />
       </View>
