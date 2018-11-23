@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   buttonView: {
     width: "100%",
     backgroundColor: '#adc9d8',
-    borderRadius: 10,
+    borderRadius: 8,
     margin: 2,
     flex: 1,
     justifyContent: 'center',
@@ -40,6 +40,16 @@ const styles = StyleSheet.create({
 });
 
 export default class HomeScreen extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.navigateTo = this.navigateTo.bind(this);
+  }
+
+  navigateTo(screen) {
+    this.props.navigation.push(screen);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -49,11 +59,11 @@ export default class HomeScreen extends React.Component {
         <View style={styles.buttonsView}>
           <View style={styles.buttonView}>
             <IADLargeButton title="Find a Date" color="white"
-              onPress={() => this.props.navigation.navigate('FindDate')}/>
+              onPress={() => this.navigateTo('FindDate')}/>
           </View>
           <View style={styles.buttonView}>
             <IADLargeButton title="Review a Date" color="white"
-              onPress={() => this.props.navigation.navigate('ReviewDate')}/>
+              onPress={() => this.navigateTo('ReviewDate')}/>
           </View>
         </View>
         <View style={{flex: 3}}/>

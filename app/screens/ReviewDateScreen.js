@@ -1,32 +1,43 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableWithoutFeedback, Text, View  } from 'react-native';
-import { SearchBar } from 'react-native-elements';
-import axios from 'axios';
+import { StyleSheet, FlatList, TouchableWithoutFeedback, Text, TextInput, View  } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#c0dae8',
+    padding: 12,
   },
-  searchBarContainer: {
+  formEntryContainer: {
+    display: 'flex',
     backgroundColor: 'white',
-    width: '100%',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    borderRadius: 8,
   },
-  searchBarInputContainer: {
-    backgroundColor: '#c0dae8',
+  formEntryTitleContainer: {
+    flexDirection: 'row',
+    marginTop: 2,
+    marginBottom: 2,
   },
-  rowContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    padding: 14,
+  formEntryTitle: {
+    width: '85%',
+    padding: 6,
   },
-  rowTitle: {
-    fontWeight: '300',
-    fontSize: 16,
+  formEntryRightIcon: {
+    width: '15%',
+    textAlign: 'center',
+    alignSelf: 'center'
   },
-  rowSubtitle: {
-    color: 'grey',
-    fontSize: 12,
+  formEntryInput: {
+    marginTop: 4,
+    marginBottom: 4,
+    padding: 10,
+    height: 40,
+    borderRadius: 8,
+    borderColor: 'grey',
+    borderWidth: 1,
   },
 });
 
@@ -34,78 +45,65 @@ export default class ReviewDateScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { results: [], searchText: "", isLoading: true, timeout: null };
-    this.searchBarOnChangeText = this.searchBarOnChangeText.bind(this);
-    this.searchForPlace = this.searchForPlace.bind(this);
-    this.rowOnSelect = this.rowOnSelect.bind(this);
+    this.state = { dateTitle: "", taggedLocations: [] };
+    this.onPressAddLocation = this.onPressAddLocation.bind(this);
+    this.onFinishAddLocation = this.onFinishAddLocation.bind(this);
   }
 
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
+  onPressAddLocation() {
+    console.log("PRESSED");
+    //this.props.navigation.navigate('LocationSearch');
+    this.props.navigation.push('LocationSearch', 
+      {
+        onFinish: this.onFinishAddLocation,
+        onCancel: () => console.log("Add location cancelled"),
+      },
+    );
   }
 
-
-  // Handler method for text change events on the search bar
-  searchBarOnChangeText(text) {
-    this.setState({ searchText: text });
-
-    // Reset 300ms timer for running searchForPlace back to 0 (rate limit)
-    clearTimeout(this.state.timeout);
-    this.setState({ timeout: setTimeout(() => this.searchForPlace(text), 300) });
-  }
-
-  // Handler method for text cleared events on the search bar
-  searchBarOnClear() {
-    this.setState({ searchText: "", results: [] });
-    clearTimeout(this.state.timeout);
-  }
-
-  // Initiate API call to search Google Places API for text
-  searchForPlace(text) {
-    axios.get('https://maps.googleapis.com/maps/api/place/findplacefromtext/json', {
-      headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-      params: {
-        key: 'AIzaSyALMjinQuXMZRQv8DVSDH3Q2CwRr6OameQ',
-        input: text,
-        inputtype: 'textquery',
-        fields: 'formatted_address,name,place_id,rating'
-      }
-    }).then(response => {
-      // Update the FlatList to show results
-      console.log(response.data.candidates);
-      this.setState({ results: response.data.candidates });
-    });
-  }
-
-  // Handler for row selection
-  rowOnSelect(selectedResult) {
-    this.setState({ results: [] });
+  onFinishAddLocation(location) {
+    console.log("Updated!");
+    this.setState(prevState => ({
+      taggedLocations: [...prevState.taggedLocations, location]
+    }))
   }
 
   // Component render implementation.
   render() {
     return (
       <View style={styles.container}>
-        <SearchBar
-          lightTheme
-          containerStyle={styles.searchBarContainer}
-          inputContainerStyle={styles.searchBarInputContainer}
-          onChangeText={this.searchBarOnChangeText}
-          onClear={this.searchBarDidChangeText}
-          placeholder='Search for a location...' />
-        <FlatList
-          data={this.state.results}
-          renderItem={({item}) => 
-            <TouchableWithoutFeedback onPress={(_) => this.rowOnSelect(item)}>
-              <View style={styles.rowContainer}>
-                <Text style={styles.rowTitle}>{item.name}</Text>
-                <Text style={styles.rowSubtitle}>{item.formatted_address}</Text>
-              </View>
-            </TouchableWithoutFeedback>
-          }
-          keyExtractor={(item, _) => item.place_id}
-          keyboardShouldPersistTaps='always'
-        />
+        <View style={styles.formEntryContainer}>
+          <View style={styles.formEntryTitleContainer}>
+            <Text style={styles.formEntryTitle}>Name</Text>
+          </View>
+          <TextInput
+            style={styles.formEntryInput}
+            multiline={false}
+            numberOfLines={1}
+            onChangeText={(text) => this.setState({ dateTitle: text })}
+            placeholder="Name your date..."
+            value={this.state.dateTitle}
+          />
+        </View>
+        <View style={styles.formEntryContainer}>
+          <View style={styles.formEntryTitleContainer}>
+            <Text style={styles.formEntryTitle}>Tagged Locations</Text>
+              <Icon style={styles.formEntryRightIcon} name='plus' onPress={this.onPressAddLocation}/>
+          </View>
+          <FlatList
+            data={this.state.taggedLocations}
+            renderItem={({item}) => 
+              <TouchableWithoutFeedback onPress={(_) => this.rowOnSelect(item)}>
+                <View style={styles.rowContainer}>
+                  <Text style={styles.rowTitle}>{item.name}</Text>
+                  <Text style={styles.rowSubtitle}>{item.formatted_address}</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            }
+            keyExtractor={(item, _) => item.place_id}
+            keyboardShouldPersistTaps='always'
+          />
+        </View>
       </View>
     );
   }

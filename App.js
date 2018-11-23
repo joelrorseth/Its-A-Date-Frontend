@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './app/screens/HomeScreen';
 import FindDateScreen from './app/screens/FindDateScreen';
 import ReviewDateScreen from './app/screens/ReviewDateScreen';
+import LocationSearchScreen from './app/screens/LocationSearchScreen';
 
 const RootStack = createStackNavigator(
   {
@@ -14,6 +15,9 @@ const RootStack = createStackNavigator(
     },
     ReviewDate: {
       screen: ReviewDateScreen
+    },
+    LocationSearch: {
+      screen: LocationSearchScreen
     },
   },
   {
