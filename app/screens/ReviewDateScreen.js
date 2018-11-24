@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   formEntryInput: {
+    color: 'grey',
     marginTop: 4,
     marginBottom: 4,
     padding: 10,
@@ -86,7 +87,7 @@ export default class ReviewDateScreen extends React.Component {
         <View style={styles.formEntryContainer}>
           <View style={styles.formEntryTitleContainer}>
             <Text style={styles.formEntryTitle}>Tagged Locations</Text>
-              <Icon style={styles.formEntryRightIcon} name='plus' onPress={this.onPressAddLocation}/>
+            <Icon style={styles.formEntryRightIcon} name='plus' onPress={this.onPressAddLocation}/>
           </View>
           <IADTableView data={this.state.taggedLocations} titleKey="name" 
             subtitleKey="formatted_address"/>
