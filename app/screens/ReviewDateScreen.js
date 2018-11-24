@@ -91,8 +91,8 @@ export default class ReviewDateScreen extends React.Component {
             <Text style={styles.formEntryTitle}>Tagged Locations</Text>
             <Icon style={styles.formEntryRightIcon} name='plus' onPress={this.onPressAddLocation}/>
           </View>
-          <IADTableView data={this.state.taggedLocations} titleKey="name" 
-            subtitleKey="formatted_address"/>
+          <IADTableView data={this.state.taggedLocations} objectKey="locationInfo"
+            titleKey="name" subtitleKey="formatted_address"/>
         </View>
         <View style={styles.formEntryContainer}>
           <View style={styles.formEntryTitleContainer}>

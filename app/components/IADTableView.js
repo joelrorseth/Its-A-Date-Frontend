@@ -40,9 +40,21 @@ export default class IADTableView extends React.Component {
           data={this.props.data}
           renderItem={({item}) => 
             <TouchableWithoutFeedback onPress={(_) => this.props.onRowSelect(item)}>
-              <View style={styles.rowContainer}>
-                <Text style={styles.rowTitle}>{item[this.props.titleKey]}</Text>
-                <Text style={styles.rowSubtitle}>{item[this.props.subtitleKey]}</Text>
+              <View>
+              {this.props.objectKey &&
+                <View style={styles.rowContainer}>
+                  <Text style={styles.rowTitle}>{
+                    item[this.props.objectKey][this.props.titleKey]}</Text>
+                  <Text style={styles.rowSubtitle}>
+                    {item[this.props.objectKey][this.props.subtitleKey]}</Text>
+                </View>
+              }
+              {(!this.props.objectKey) &&
+                <View style={styles.rowContainer}>
+                  <Text style={styles.rowTitle}>{item[this.props.titleKey]}</Text>
+                  <Text style={styles.rowSubtitle}>{item[this.props.subtitleKey]}</Text>
+                </View>
+              }
               </View>
             </TouchableWithoutFeedback>
           }

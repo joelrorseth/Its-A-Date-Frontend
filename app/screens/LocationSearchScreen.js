@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View  } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { SearchBar, Rating } from 'react-native-elements';
 import IADTableView from '../components/IADTableView';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IADLargeButton from '../components/IADLargeButton';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,6 +65,13 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 6,
   },
+  buttonView: {
+    width: "100%",
+    backgroundColor: 'green',
+    borderRadius: 8,
+    margin: 2,
+    justifyContent: 'center',
+  },
 });
 
 export default class LocationSearchScreen extends React.Component {
@@ -72,12 +80,13 @@ export default class LocationSearchScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { rating: null, results: [], searchText: "", isLoading: true, timeout: null,
-      showSearch: true, showForm: false };
+    this.state = { locationComment: null, locationRating: null, results: [], selectedResult: null, searchText: "", 
+      isLoading: true, timeout: null, showSearch: true, showForm: false };
     this.toggleSearchAndEditMode = this.toggleSearchAndEditMode.bind(this);
     this.searchBarOnChangeText = this.searchBarOnChangeText.bind(this);
     this.searchForPlace = this.searchForPlace.bind(this);
     this.onRowSelect = this.onRowSelect.bind(this);
+    this.onFinish = this.onFinish.bind(this);
   }
 
   componentWillUnmount() {
@@ -122,11 +131,18 @@ export default class LocationSearchScreen extends React.Component {
 
   // Handler for row selection
   onRowSelect(selectedResult) {
+    this.setState({ results: [], selectedResult: selectedResult });
     this.toggleSearchAndEditMode();
+  }
 
-    // TODO: Move this response to a Done button
-    //this.props.navigation.state.params.onFinish(selectedResult);
-    //this.props.navigation.goBack();
+  // Handler for pressing the Add to Date Review button
+  onFinish() {
+    this.props.navigation.state.params.onFinish({
+      locationInfo: this.state.selectedResult,
+      locationUserRating: this.state.locationRating,
+      locationUserComment: this.state.locationComment,
+    });
+    this.props.navigation.goBack();
   }
 
   // Component render implementation.
@@ -152,11 +168,11 @@ export default class LocationSearchScreen extends React.Component {
           <View style={styles.formContainer}>
             <View style={styles.formEntryContainer}>
               <View style={styles.formEntryTitleContainer}>
-                <Text style={styles.formEntryTitle}>{this.state.results[0]["name"]}</Text>
+                <Text style={styles.formEntryTitle}>{this.state.selectedResult["name"]}</Text>
                 <Icon style={styles.formEntryRightIcon} name='edit' 
                   onPress={this.toggleSearchAndEditMode}/>
               </View>
-              <Text style={styles.formEntryText}>{this.state.results[0]["formatted_address"]}</Text>
+              <Text style={styles.formEntryText}>{this.state.selectedResult["formatted_address"]}</Text>
             </View>
 
             <View style={styles.formEntryContainer}>
@@ -168,7 +184,7 @@ export default class LocationSearchScreen extends React.Component {
                 fractions={0}
                 startingValue={0}
                 imageSize={30}
-                onFinishRating={(newRating) => this.setState({ rating: newRating }) }
+                onFinishRating={(newRating) => this.setState({ locationRating: newRating }) }
                 style={styles.rating}
             />
             </View>
@@ -181,10 +197,15 @@ export default class LocationSearchScreen extends React.Component {
                 style={styles.formEntryInput}
                 multiline={true}
                 numberOfLines={4}
-                onChangeText={(text) => this.setState({ dateComment: text })}
+                onChangeText={(text) => this.setState({ locationComment: text })}
                 placeholder="Describe this location..."
-                value={this.state.dateComment}
+                value={this.state.locationComment}
               />
+            </View>
+
+            <View style={styles.buttonView}>
+              <IADLargeButton title="Add to Date Review" color="white"
+                onPress={() => this.onFinish()}/>
             </View>
           </View>
         }
