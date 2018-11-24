@@ -10,6 +10,9 @@ const styles = StyleSheet.create({
 });
 
 export default class FindDateScreen extends React.Component {
+
+  static navigationOptions = { title: 'Find a Date' };
+
   render() {
     return (
       <View style={styles.container}>

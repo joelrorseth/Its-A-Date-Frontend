@@ -45,6 +45,8 @@ const styles = StyleSheet.create({
 
 export default class ReviewDateScreen extends React.Component {
 
+  static navigationOptions = { title: 'Review a Date' };
+
   constructor(props){
     super(props);
     this.state = { dateTitle: "", dateComment: "", taggedLocations: [] };

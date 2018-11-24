@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableWithoutFeedback, Text, TextInput, View  } from 'react-native';
+import { StyleSheet, Text, TextInput, View  } from 'react-native';
 import { SearchBar, Rating } from 'react-native-elements';
 import IADTableView from '../components/IADTableView';
 import axios from 'axios';
@@ -67,6 +67,8 @@ const styles = StyleSheet.create({
 });
 
 export default class LocationSearchScreen extends React.Component {
+
+  static navigationOptions = { title: 'Tag a Location' };
 
   constructor(props){
     super(props);
