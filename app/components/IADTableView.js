@@ -26,6 +26,8 @@ const styles = StyleSheet.create({
 
 // Generic Table View component, with props to handle selection and
 // specify keys mapping data source to title and subtitle of each row.
+// An optional objectKey can be provided to specifya sub object within 
+// props.data elements, which should be accessed instead.
 
 export default class IADTableView extends React.Component {
 
@@ -33,6 +35,7 @@ export default class IADTableView extends React.Component {
     super(props);
   }
 
+  // Component render implementation
   render() {
     return (
       <View style={styles.container}>

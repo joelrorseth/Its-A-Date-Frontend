@@ -7,10 +7,12 @@ export default class IADLargeButton extends React.Component {
     super(props);
   }
 
+  // Component render implementation
   render() {
     return (
-      <Button 
+      <Button
         title={this.props.title}
+        disabled={this.props.disabled ? this.props.disabled : false}
         color={(this.props.color ? this.props.color : 'blue')}
         onPress={this.props.onPress}
       />

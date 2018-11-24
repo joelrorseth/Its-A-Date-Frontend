@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View  } from 'react-native';
 import IADTableView from '../components/IADTableView';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IADLargeButton from '../components/IADLargeButton';
 
 const styles = StyleSheet.create({
   container: {
@@ -41,6 +42,20 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     borderWidth: 0.2,
   },
+  buttonEnabled: {
+    width: "100%",
+    backgroundColor: 'green',
+    borderRadius: 8,
+    margin: 2,
+    justifyContent: 'center',
+  },
+  buttonDisabled: {
+    width: "100%",
+    backgroundColor: 'grey',
+    borderRadius: 8,
+    margin: 2,
+    justifyContent: 'center',
+  },
 });
 
 export default class ReviewDateScreen extends React.Component {
@@ -49,11 +64,13 @@ export default class ReviewDateScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { dateTitle: "", dateComment: "", taggedLocations: [] };
+    this.state = { dateTitle: null, dateComment: null, readyToSubmit: false, dateLocations: [] };
     this.onPressAddLocation = this.onPressAddLocation.bind(this);
     this.onFinishAddLocation = this.onFinishAddLocation.bind(this);
+    this.onFinishReview = this.onFinishReview.bind(this);
   }
 
+  // Event handler for pressing the + button to tag a new location
   onPressAddLocation() {
     this.props.navigation.push('LocationSearch', 
       {
@@ -63,10 +80,22 @@ export default class ReviewDateScreen extends React.Component {
     );
   }
 
+  // Event handler for the LocationSearchScreen finishing and returning new location
   onFinishAddLocation(location) {
     this.setState(prevState => ({
-      taggedLocations: [...prevState.taggedLocations, location]
+      dateLocations: [...prevState.dateLocations, location]
     }))
+  }
+
+  // Event handler for the Finish Review button being clicked
+  onFinishReview() {
+
+    // TODO: Combine dateComment, dateTitle, and dateLocations into a 'Date' obj
+    // that will be persisted to our server
+
+    // TODO: Delay a bit and show confirmation popup
+
+    this.props.navigation.goBack();
   }
 
   // Component render implementation.
@@ -91,7 +120,7 @@ export default class ReviewDateScreen extends React.Component {
             <Text style={styles.formEntryTitle}>Tagged Locations</Text>
             <Icon style={styles.formEntryRightIcon} name='plus' onPress={this.onPressAddLocation}/>
           </View>
-          <IADTableView data={this.state.taggedLocations} objectKey="locationInfo"
+          <IADTableView data={this.state.dateLocations} objectKey="locationInfo"
             titleKey="name" subtitleKey="formatted_address"/>
         </View>
         <View style={styles.formEntryContainer}>
@@ -106,6 +135,19 @@ export default class ReviewDateScreen extends React.Component {
             placeholder="Describe your date..."
             value={this.state.dateComment}
           />
+        </View>
+        <View style={
+          (this.state.dateComment && (this.state.dateComment.length > 3)
+            && this.state.dateTitle && (this.state.dateTitle.length > 3)
+            && this.state.dateLocations.length > 0) 
+          ? styles.buttonEnabled : styles.buttonDisabled
+        }
+        >
+          <IADLargeButton title="Finish Review" color="white" 
+            disabled={!(this.state.dateComment && (this.state.dateComment.length > 3)
+              && this.state.dateTitle && (this.state.dateTitle.length > 3)
+              && this.state.dateLocations.length > 0)}
+            onPress={() => this.onFinishReview()}/>
         </View>
       </View>
     );

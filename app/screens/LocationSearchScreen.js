@@ -93,6 +93,7 @@ export default class LocationSearchScreen extends React.Component {
     clearTimeout(this.timeout);
   }
 
+  // Toggle the search area and the form area visibility, only one should be visible
   toggleSearchAndEditMode() {
     this.setState({ showForm: !this.state.showForm, showSearch: !this.state.showSearch });
   }
