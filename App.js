@@ -4,9 +4,13 @@ import HomeScreen from './app/screens/HomeScreen';
 import FindDateScreen from './app/screens/FindDateScreen';
 import ReviewDateScreen from './app/screens/ReviewDateScreen';
 import LocationSearchScreen from './app/screens/LocationSearchScreen';
+import AuthScreen from './app/screens/AuthScreen';
 
 const RootStack = createStackNavigator(
   {
+    Auth: {
+      screen: AuthScreen
+    },
     Home: {
       screen: HomeScreen
     },
@@ -21,7 +25,7 @@ const RootStack = createStackNavigator(
     },
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "Auth",
   }
 );
 
