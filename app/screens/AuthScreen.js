@@ -100,11 +100,11 @@ export default class AuthScreen extends React.Component {
         if (response.status == 201 || response.data.message == "User created") {
           oldThis.attemptLogin();
         } else {
-          // TODO: Display error popup
+          alert("Your email is already being used, please use another.")
         }
       }).catch(function (error) {
         console.log(error);
-        // TODO: Display error popup
+        alert("Your email is already being used, please use another.")
       });
     } else {
       this.attemptLogin();
@@ -129,11 +129,11 @@ export default class AuthScreen extends React.Component {
 
         this.props.navigation.push('Home');
       } else {
-        // TODO: Display error popup
+        alert("Your credentials are incorrect, please try again.")
       }
     }).catch(error => {
       console.log(error);
-      // TODO: Display error popup
+      alert("Your credentials are incorrect, please try again.")
     })
   }
 
