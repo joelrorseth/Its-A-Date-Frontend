@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
 import IADLargeButton from '../components/IADLargeButton';
-
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -83,21 +83,58 @@ export default class AuthScreen extends React.Component {
     this.state = { creatingNewAccount: false, emailField: "", passwordField: "" };
     this.onToggleCreateNewAccount = this.onToggleCreateNewAccount.bind(this);
     this.onProceedButtonPressed = this.onProceedButtonPressed.bind(this);
+    this.attemptLogin = this.attemptLogin.bind(this);
   }
 
   // Event handler for pressing the proceed button
   onProceedButtonPressed() {
+    const oldThis = this;
     if (this.state.creatingNewAccount) {
-      // TODO: Tell server to create account first
-    }
+      axios.post('http://localhost:3000/user/createAccount', {
+        email: this.state.emailField,
+        userName: this.state.emailField.split('@')[0],
+        password: this.state.passwordField
+      }).then(function (response) {
+        console.log(response);
 
-    // TODO: Verify credentials via server, then present error message or transition to Home
-    this.props.navigation.push('Home');
+        if (response.status == 201 || response.data.message == "User created") {
+          oldThis.attemptLogin();
+        } else {
+          // TODO: Display error popup
+        }
+      }).catch(function (error) {
+        console.log(error);
+        // TODO: Display error popup
+      });
+    } else {
+      this.attemptLogin();
+    }
   }
 
   // Event handler for pressing the toggle Login/Create button
   onToggleCreateNewAccount() {
     this.setState({ creatingNewAccount: !this.state.creatingNewAccount });
+  }
+
+  // Attempt login via server and handle response accordingly
+  attemptLogin() {
+    axios.post('http://localhost:3000/user/login', {
+      email: this.state.emailField,
+      password: this.state.passwordField
+    }).then(response => {
+      console.log(response);
+
+      if (response.status == 200 || response.data.message == "Auth successful") {
+        // TODO: Globally set and track username of current user
+
+        this.props.navigation.push('Home');
+      } else {
+        // TODO: Display error popup
+      }
+    }).catch(error => {
+      console.log(error);
+      // TODO: Display error popup
+    })
   }
 
   // Component render implementation.
