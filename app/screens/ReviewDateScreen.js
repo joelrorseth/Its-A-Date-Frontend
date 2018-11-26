@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, View  } from 'react-native';
 import IADTableView from '../components/IADTableView';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IADLargeButton from '../components/IADLargeButton';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,10 +65,11 @@ export default class ReviewDateScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { dateTitle: null, dateComment: null, readyToSubmit: false, dateLocations: [] };
+    this.state = { dateTitle: null, dateComment: null, dateLocations: [], readyToSubmit: false };
     this.onPressAddLocation = this.onPressAddLocation.bind(this);
     this.onFinishAddLocation = this.onFinishAddLocation.bind(this);
     this.onFinishReview = this.onFinishReview.bind(this);
+    this.saveDateInfoToServer = this.saveDateInfoToServer.bind(this);
   }
 
   // Event handler for pressing the + button to tag a new location
@@ -89,14 +91,96 @@ export default class ReviewDateScreen extends React.Component {
 
   // Event handler for the Finish Review button being clicked
   onFinishReview() {
+    const oldThis = this;
 
-    // TODO: Combine dateComment, dateTitle, and dateLocations into a 'Date' obj
-    // that will be persisted to our server
+    // Create the Date object, and if response is OK, proceed to 
+    // create and link DLEs and Locations
 
-    // TODO: Delay a bit and show confirmation popup
-
-    this.props.navigation.goBack();
+    axios.post('http://localhost:3000/dates', {
+      nameDate: this.state.dateTitle,
+      comments: this.state.dateComment,
+      city: "Windsor",                  // TODO
+      _id: "5bfb3a33fd9fb1b72e31237b"  // TODO
+    }).then(response => {
+      console.log(response);
+      if (response.status == 200 || response.status == 201)
+        oldThis.saveDateInfoToServer(response.data.createdDate);
+    }).catch(error => {
+      console.log(error);
+    });
   }
+
+
+  // Handle creation of Location and DLE objects, linking to newly created Date
+  saveDateInfoToServer(newDateObj) {
+    var newDateID = newDateObj._id;
+    var createLocationsPromises = [];
+    var newLocations = [];
+    
+    // Collect all POST requests into an array of promises (executables)
+    this.state.dateLocations.forEach(locationObj => {
+      createLocationsPromises.push(
+        axios.post('http://localhost:3000/location', {
+          place_id: locationObj.locationInfo.place_id,
+          nameLocation: locationObj.locationInfo.name,
+          address: locationObj.locationInfo.formatted_address,
+          rating: locationObj.locationInfo.rating,
+        })
+      );
+    });
+
+    // Execute all promises synchronously
+    axios.all(createLocationsPromises)
+      .then(results => {
+        results.forEach(response => {
+          console.log(response);
+          newLocations.push(response.data.location);
+          if (response.status != 201 && response.status != 200)
+            return;
+        })
+      }).catch(_ => {error => {
+        console.log(error);
+        return;
+      }}
+    ).then(() => {
+
+      var createDLEPromises = [];
+
+      // Create DateLineEntry objects,
+      newLocations.forEach((locationServerObj, i) => {
+        createDLEPromises.push(
+          axios.post('http://localhost:3000/dateLineEntry', {
+            date: newDateID,                      // a date id.
+            location: locationServerObj._id,      // a location id. 
+            name: locationServerObj.nameLocation,
+            rating: this.state.dateLocations.locationUserRating,
+            comments: this.state.dateLocations.locationUserComment,
+          })
+        );
+      });
+
+      // Execute the promises to create the DLE's
+      axios.all(createDLEPromises)
+        .then(results => {
+          console.log("In it");
+          console.log(results);
+          results.forEach(response => {
+            console.log(response);
+            if (response.status != 201 && response.status != 200)
+              return;
+          })
+        }).catch(_ => {error => {
+          console.log(error);
+          return;
+        }}
+      ).then(() => {
+        alert("Thank you for submitting your review!");
+        this.props.navigation.goBack();
+      });
+
+    });
+  }
+
 
   // Component render implementation.
   render() {

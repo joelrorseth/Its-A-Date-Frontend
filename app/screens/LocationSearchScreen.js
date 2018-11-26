@@ -125,7 +125,7 @@ export default class LocationSearchScreen extends React.Component {
       }
     }).then(response => {
       // Update the FlatList to show results
-      console.log(response.data.candidates);
+      //console.log(response.data.candidates);
       this.setState({ results: response.data.candidates });
     });
   }
