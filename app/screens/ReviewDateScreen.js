@@ -162,8 +162,6 @@ export default class ReviewDateScreen extends React.Component {
       // Execute the promises to create the DLE's
       axios.all(createDLEPromises)
         .then(results => {
-          console.log("In it");
-          console.log(results);
           results.forEach(response => {
             console.log(response);
             if (response.status != 201 && response.status != 200)
