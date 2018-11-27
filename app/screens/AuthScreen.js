@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
 import IADLargeButton from '../components/IADLargeButton';
 import axios from 'axios';
+import UserManager from '../models/UserManager';
 
 const styles = StyleSheet.create({
   container: {
@@ -125,9 +126,13 @@ export default class AuthScreen extends React.Component {
       console.log(response);
 
       if (response.status == 200 || response.data.message == "Auth successful") {
-        // TODO: Globally set and track username of current user
+        // The static UserManager object saves the current user's _id
+        sharedUserManager = UserManager.getInstance();
+        sharedUserManager.setUserID(response.data._id);
 
+        // Transition to the Home screen
         this.props.navigation.push('Home');
+        
       } else {
         alert("Your credentials are incorrect, please try again.")
       }

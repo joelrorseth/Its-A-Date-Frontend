@@ -4,6 +4,7 @@ import IADTableView from '../components/IADTableView';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IADLargeButton from '../components/IADLargeButton';
 import axios from 'axios';
+import UserManager from '../models/UserManager';
 
 const styles = StyleSheet.create({
   container: {
@@ -100,11 +101,13 @@ export default class ReviewDateScreen extends React.Component {
       nameDate: this.state.dateTitle,
       comments: this.state.dateComment,
       city: "Windsor",                  // TODO
-      _id: "5bfb3a33fd9fb1b72e31237b"  // TODO
+      _id: UserManager.getInstance().getUserID(),
     }).then(response => {
       console.log(response);
-      if (response.status == 200 || response.status == 201)
+      if (response.status == 200 || response.status == 201) {
+        console.log("> Date object saved");
         oldThis.saveDateInfoToServer(response.data.createdDate);
+      }
     }).catch(error => {
       console.log(error);
     });
@@ -116,6 +119,7 @@ export default class ReviewDateScreen extends React.Component {
     var newDateID = newDateObj._id;
     var createLocationsPromises = [];
     var newLocations = [];
+    const oldThis = this;
     
     // Collect all POST requests into an array of promises (executables)
     this.state.dateLocations.forEach(locationObj => {
@@ -137,46 +141,66 @@ export default class ReviewDateScreen extends React.Component {
           newLocations.push(response.data.location);
           if (response.status != 201 && response.status != 200)
             return;
-        })
-      }).catch(_ => {error => {
+        });
+      })
+      .catch(error => {
         console.log(error);
         return;
-      }}
-    ).then(() => {
-
-      var createDLEPromises = [];
-
-      // Create DateLineEntry objects,
-      newLocations.forEach((locationServerObj, i) => {
-        createDLEPromises.push(
-          axios.post('http://localhost:3000/dateLineEntry', {
-            date: newDateID,                      // a date id.
-            location: locationServerObj._id,      // a location id. 
-            name: locationServerObj.nameLocation,
-            rating: this.state.dateLocations.locationUserRating,
-            comments: this.state.dateLocations.locationUserComment,
-          })
-        );
-      });
-
-      // Execute the promises to create the DLE's
-      axios.all(createDLEPromises)
-        .then(results => {
-          results.forEach(response => {
-            console.log(response);
-            if (response.status != 201 && response.status != 200)
-              return;
-          })
-        }).catch(_ => {error => {
-          console.log(error);
-          return;
-        }}
-      ).then(() => {
-        alert("Thank you for submitting your review!");
-        this.props.navigation.goBack();
-      });
-
+      })
+      .then(() => {
+        console.log("> Location objects have been saved");
+        oldThis.saveDLEInfoToServer(newLocations, newDateID);
     });
+  }
+
+
+  saveDLEInfoToServer(newLocations, newDateID) {
+
+    var createDLEPromises = [];
+
+    // Create DateLineEntry objects,
+    newLocations.forEach((locationServerObj, i) => {
+      console.log({
+          date: newDateID,                      // a date id.
+          location: locationServerObj._id,      // a location id. 
+          name: locationServerObj.nameLocation,
+          rating: this.state.dateLocations[i].locationUserRating,
+          comments: this.state.dateLocations[i].locationUserComment,
+      });
+      createDLEPromises.push(
+        axios.post('http://localhost:3000/dateLineEntry', {
+          date: newDateID,                      // a date id.
+          location: locationServerObj._id,      // a location id. 
+          name: locationServerObj.nameLocation,
+          rating: this.state.dateLocations[i].locationUserRating,
+          comments: this.state.dateLocations[i].locationUserComment,
+        })
+      );
+    });
+
+    // Execute the promises to create the DLE's
+    axios.all(createDLEPromises)
+      .then(results => {
+        results.forEach(response => {
+          console.log(response);
+          if (response.status != 201 && response.status != 200)
+            return;
+        });
+      })
+      .catch(error => {
+        console.log(error);
+        throw error;
+      })
+      .then(() => {
+        alert("Thank you for submitting your review!");
+        console.log("> DLE objects have been saved");
+        console.log("Successfully saved date with dateID " + newDateID);
+        this.props.navigation.goBack();
+      })
+      .catch(_ => 
+        alert("An error occurred while submitting your date. Please try again.")
+      );
+
   }
 
 
