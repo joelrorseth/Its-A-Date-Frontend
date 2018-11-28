@@ -31,7 +31,7 @@ export default class PersistenceManager {
     return axios.post(this.host+'dates', {
       nameDate: rawDateObj.dateTitle,
       comments: rawDateObj.dateComment,
-      city: "Windsor",                  // TODO
+      city: rawDateObj.dateCity,
       _id: UserManager.getInstance().getUserID(),
     }).then(response => {
       if (response.status == 200 || response.status == 201)
@@ -94,20 +94,13 @@ export default class PersistenceManager {
 
     // Create DateLineEntry objects,
     serverLocationsObj.forEach((locationServerObj, i) => {
-      console.log({
-        date: serverDateID,                      // a date id.
-        location: locationServerObj._id,      // a location id. 
-        name: locationServerObj.nameLocation,
-        rating: rawLocationsObj[i].locationUserRating ? rawLocationsObj[i].locationUserRating : "",
-        comments: rawLocationsObj[i].locationUserComment ? rawLocationsObj[i].locationUserComment : "",
-      });
       createDLEPromises.push(
         axios.post(this.host+'dateLineEntry', {
           date: serverDateID,                      // a date id.
           location: locationServerObj._id,      // a location id. 
           name: locationServerObj.nameLocation,
-          rating: rawLocationsObj[i].locationUserRating ? rawLocationsObj[i].locationUserRating : 0,
-          comments: rawLocationsObj[i].locationUserComment ? rawLocationsObj[i].locationUserComment : " ",
+          rating: rawLocationsObj[i].locationUserRating,
+          comments: rawLocationsObj[i].locationUserComment,
         })
       );
     });

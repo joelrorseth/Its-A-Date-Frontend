@@ -66,7 +66,7 @@ export default class ReviewDateScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { dateTitle: null, dateComment: null, dateLocations: [], readyToSubmit: false };
+    this.state = { dateCity: null, dateComment: null, dateTitle: null, dateLocations: [], readyToSubmit: false };
     this.onPressAddLocation = this.onPressAddLocation.bind(this);
     this.onFinishAddLocation = this.onFinishAddLocation.bind(this);
     this.onFinishReview = this.onFinishReview.bind(this);
@@ -94,7 +94,11 @@ export default class ReviewDateScreen extends React.Component {
 
     // Ask PersistenceManager to save the Date review, await response
     PersistenceManager.getInstance().saveDate(
-      { dateTitle: this.state.dateTitle, dateComment: this.state.dateComment }, 
+      { 
+        dateTitle: this.state.dateTitle,
+        dateComment: this.state.dateComment,
+        dateCity: this.state.dateCity
+      }, 
       this.state.dateLocations
     ).then(() => {
       alert("Thank you for submitting your review!");
@@ -122,6 +126,21 @@ export default class ReviewDateScreen extends React.Component {
             value={this.state.dateTitle}
           />
         </View>
+
+        <View style={styles.formEntryContainer}>
+          <View style={styles.formEntryTitleContainer}>
+            <Text style={styles.formEntryTitle}>City</Text>
+          </View>
+          <TextInput
+            style={styles.formEntryInput}
+            multiline={false}
+            numberOfLines={1}
+            onChangeText={(text) => this.setState({ dateCity: text })}
+            placeholder="Which city were you in?"
+            value={this.state.dateCity}
+          />
+        </View>
+
         <View style={styles.formEntryContainer}>
           <View style={styles.formEntryTitleContainer}>
             <Text style={styles.formEntryTitle}>Tagged Locations</Text>
@@ -146,6 +165,7 @@ export default class ReviewDateScreen extends React.Component {
         <View style={
           (this.state.dateComment && (this.state.dateComment.length > 3)
             && this.state.dateTitle && (this.state.dateTitle.length > 3)
+            && this.state.dateCity && (this.state.dateCity.length > 3)
             && this.state.dateLocations.length > 0) 
           ? styles.buttonEnabled : styles.buttonDisabled
         }
@@ -153,6 +173,7 @@ export default class ReviewDateScreen extends React.Component {
           <IADLargeButton title="Finish Review" color="white" 
             disabled={!(this.state.dateComment && (this.state.dateComment.length > 3)
               && this.state.dateTitle && (this.state.dateTitle.length > 3)
+              && this.state.dateCity && (this.state.dateCity.length > 3)
               && this.state.dateLocations.length > 0)}
             onPress={() => this.onFinishReview()}/>
         </View>
