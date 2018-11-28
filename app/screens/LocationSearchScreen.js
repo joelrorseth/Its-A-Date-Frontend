@@ -65,9 +65,16 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingBottom: 6,
   },
-  buttonView: {
+  buttonEnabled: {
     width: "100%",
     backgroundColor: 'green',
+    borderRadius: 8,
+    margin: 2,
+    justifyContent: 'center',
+  },
+  buttonDisabled: {
+    width: "100%",
+    backgroundColor: 'grey',
     borderRadius: 8,
     margin: 2,
     justifyContent: 'center',
@@ -204,8 +211,16 @@ export default class LocationSearchScreen extends React.Component {
               />
             </View>
 
-            <View style={styles.buttonView}>
+            <View style={
+              (this.state.locationComment && this.state.locationComment.length > 5
+                && this.state.locationRating && this.state.locationRating > 0
+                && this.state.selectedResult)
+              ? styles.buttonEnabled : styles.buttonDisabled  
+            }>
               <IADLargeButton title="Add to Date Review" color="white"
+                disabled={!(this.state.locationComment && this.state.locationComment.length > 5
+                  && this.state.locationRating && this.state.locationRating > 0
+                  && this.state.selectedResult)}
                 onPress={() => this.onFinish()}/>
             </View>
           </View>
