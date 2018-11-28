@@ -92,21 +92,17 @@ export default class AuthScreen extends React.Component {
   onProceedButtonPressed() {
     const oldThis = this;
     if (this.state.creatingNewAccount) {
-      axios.post('http://localhost:3000/user/createAccount', {
-        email: this.state.emailField,
-        userName: this.state.emailField.split('@')[0],
-        password: this.state.passwordField
-      }).then(function (response) {
-
-        if (response.status == 201 || response.data.message == "User created") {
+      UserManager.getInstance().createUser(this.state.emailField, 
+        this.state.emailField.split('@')[0], this.state.passwordField)
+        
+        .then(_ => {
+          // At this point, UserManager has guaranteed successful account creation
           oldThis.attemptLogin();
-        } else {
-          alert("Your email is already being used, please use another.")
-        }
-      }).catch(function (error) {
-        console.log(error);
-        alert("Your email is already being used, please use another.")
-      });
+        })
+        .catch(error => {
+          alert("Your email is already being used, please use another.");
+        });
+    
     } else {
       this.attemptLogin();
     }
@@ -119,25 +115,14 @@ export default class AuthScreen extends React.Component {
 
   // Attempt login via server and handle response accordingly
   attemptLogin() {
-    axios.post('http://localhost:3000/user/login', {
-      email: this.state.emailField,
-      password: this.state.passwordField
-    }).then(response => {
-
-      if (response.status == 200 || response.data.message == "Auth successful") {
-        // The static UserManager object saves the current user's _id
-        sharedUserManager = UserManager.getInstance();
-        sharedUserManager.setUserID(response.data._id);
-
-        // Transition to the Home screen
+    UserManager.getInstance().logInUser(this.state.emailField, this.state.passwordField)
+      .then(_ => {
+        // At this point, the user is authorized
         this.props.navigation.push('Home');
-
-      } else {
-        alert("Your credentials are incorrect, please try again.")
-      }
-    }).catch(error => {
-      alert("Your credentials are incorrect, please try again.")
-    })
+      })
+      .catch(error => {
+        alert("Your credentials are incorrect, please try again.");
+      })
   }
 
   // Component render implementation.
