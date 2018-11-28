@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import IADLargeButton from '../components/IADLargeButton';
 import axios from 'axios';
 import UserManager from '../models/UserManager';
@@ -132,7 +133,7 @@ export default class AuthScreen extends React.Component {
 
         // Transition to the Home screen
         this.props.navigation.push('Home');
-        
+
       } else {
         alert("Your credentials are incorrect, please try again.")
       }
@@ -145,7 +146,12 @@ export default class AuthScreen extends React.Component {
   // Component render implementation.
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAwareScrollView
+      style={{ backgroundColor: '#c0dae8' }}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      contentContainerStyle={styles.container}
+      scrollEnabled={true}
+    >
         
         <View style={styles.titleView}>
           <Text style={styles.title}>It's a Date!</Text>
@@ -199,7 +205,7 @@ export default class AuthScreen extends React.Component {
           "Log into an existing account" : "I don't have an account"}
           onPress={() => this.onToggleCreateNewAccount()}/>
         <View style={{ flex: 2 }}/>
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 }

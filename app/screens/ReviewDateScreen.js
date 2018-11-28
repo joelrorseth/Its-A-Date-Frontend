@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, View  } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import IADTableView from '../components/IADTableView';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IADLargeButton from '../components/IADLargeButton';
-import axios from 'axios';
 import PersistenceManager from '../models/PersistenceManager';
 
 const styles = StyleSheet.create({
@@ -112,7 +112,11 @@ export default class ReviewDateScreen extends React.Component {
   // Component render implementation.
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAwareScrollView
+      style={{ backgroundColor: '#c0dae8' }}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      contentContainerStyle={styles.container}
+      scrollEnabled={true}>
         <View style={styles.formEntryContainer}>
           <View style={styles.formEntryTitleContainer}>
             <Text style={styles.formEntryTitle}>Name</Text>
@@ -177,7 +181,7 @@ export default class ReviewDateScreen extends React.Component {
               && this.state.dateLocations.length > 0)}
             onPress={() => this.onFinishReview()}/>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 }
