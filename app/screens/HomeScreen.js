@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import IADLargeButton from '../components/IADLargeButton';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,6 +41,18 @@ const styles = StyleSheet.create({
 });
 
 export default class HomeScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: (
+        <Icon style={{paddingRight: 20 }} size={16} name='user-times' 
+          onPress={() => {
+            navigation.push('DeleteAccount');
+          }}
+      />
+      ),
+    };
+  };
 
   constructor(props) {
     super(props);

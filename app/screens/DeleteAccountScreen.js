@@ -1,8 +1,7 @@
 import React from 'react';
-import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
+import { StyleSheet, Text, TextInput, View  } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import IADLargeButton from '../components/IADLargeButton';
-import axios from 'axios';
 import UserManager from '../models/UserManager';
 
 const styles = StyleSheet.create({
@@ -12,20 +11,28 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   titleView: {
-
     fontWeight: 'bold',
-    fontSize: 30,
-    flex: 3,
-    flexDirection: 'row',
+    flex: 2,
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 4,
+    marginBottom: 4,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
   title: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 36,
+    fontSize: 20,
+    fontFamily: 'Verdana',
+    paddingBottom: 10,
+  },
+  subtitle: {
+    color: 'white',
+    fontSize: 14,
     fontFamily: 'Verdana',
   },
   formsContainer: {
@@ -78,66 +85,25 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class AuthScreen extends React.Component {
-
+export default class DeleteAccountScreen extends React.Component {
+  
   constructor(props){
     super(props);
-    this.state = { creatingNewAccount: false, emailField: "", passwordField: "" };
-    this.onToggleCreateNewAccount = this.onToggleCreateNewAccount.bind(this);
-    this.onProceedButtonPressed = this.onProceedButtonPressed.bind(this);
-    this.attemptLogin = this.attemptLogin.bind(this);
+    this.state = { emailField: "", passwordField: "", passwordVerifyField: "" };
+    this.onDeleteButtonPressed = this.onDeleteButtonPressed.bind(this);
   }
 
-  // Event handler for pressing the proceed button
-  onProceedButtonPressed() {
-    const oldThis = this;
-    if (this.state.creatingNewAccount) {
-      axios.post('http://localhost:3000/user/createAccount', {
-        email: this.state.emailField,
-        userName: this.state.emailField.split('@')[0],
-        password: this.state.passwordField
-      }).then(function (response) {
-
-        if (response.status == 201 || response.data.message == "User created") {
-          oldThis.attemptLogin();
-        } else {
-          alert("Your email is already being used, please use another.")
-        }
-      }).catch(function (error) {
-        console.log(error);
-        alert("Your email is already being used, please use another.")
-      });
-    } else {
-      this.attemptLogin();
-    }
-  }
-
-  // Event handler for pressing the toggle Login/Create button
-  onToggleCreateNewAccount() {
-    this.setState({ creatingNewAccount: !this.state.creatingNewAccount });
-  }
-
-  // Attempt login via server and handle response accordingly
-  attemptLogin() {
-    axios.post('http://localhost:3000/user/login', {
-      email: this.state.emailField,
-      password: this.state.passwordField
-    }).then(response => {
-
-      if (response.status == 200 || response.data.message == "Auth successful") {
-        // The static UserManager object saves the current user's _id
-        sharedUserManager = UserManager.getInstance();
-        sharedUserManager.setUserID(response.data._id);
-
-        // Transition to the Home screen
-        this.props.navigation.push('Home');
-
-      } else {
-        alert("Your credentials are incorrect, please try again.")
-      }
-    }).catch(error => {
-      alert("Your credentials are incorrect, please try again.")
-    })
+  // Event handler for pressing the Delete My Account button
+  onDeleteButtonPressed() {
+    // Ask UserManager to delete current user it is managing
+    UserManager.getInstance().deleteCurrentUser()
+      .then(_ => {
+        alert("Your account was successfully purged.");
+        this.props.navigation.goBack();
+      })
+      .catch(error => {
+        alert("An error occurred, please try again.");
+      })
   }
 
   // Component render implementation.
@@ -148,9 +114,14 @@ export default class AuthScreen extends React.Component {
         resetScrollToCoords={{ x: 0, y: 0 }}
         contentContainerStyle={styles.container}
         scrollEnabled={true}
-      > 
+      >
         <View style={styles.titleView}>
-          <Text style={styles.title}>It's a Date!</Text>
+          <Text style={styles.title}>Delete Your Account</Text>
+          <Text style={styles.subtitle}>
+            To delete your account, fill in your account email and password below.
+            After confirming, your account and personal information will be 
+            permanantly deleted.
+          </Text>
         </View>
 
         <View style={styles.formsContainer}>
@@ -183,24 +154,38 @@ export default class AuthScreen extends React.Component {
               value={this.state.passwordField}
             />
           </View>
+          <View style={styles.formEntryContainer}>
+            <View style={styles.formEntryTitleContainer}>
+              <Text style={styles.formEntryTitle}>Confirm Password</Text>
+            </View>
+            <TextInput
+              style={styles.formEntryInput}
+              textContentType="password"
+              secureTextEntry={true}
+              multiline={false}
+              numberOfLines={1}
+              onChangeText={(text) => this.setState({ passwordVerifyField: text })}
+              placeholder="Password"
+              value={this.state.passwordVerifyField}
+            />
+          </View>
         </View>
 
         <View style={styles.buttonsView}>
           <View style={
-            (this.state.emailField.length > 3 && this.state.passwordField.length > 3) 
+            (this.state.emailField.length > 3 && this.state.passwordField.length > 3 
+              && this.state.passwordVerifyField.length > 3 
+              && this.state.passwordField == this.state.passwordVerifyField) 
               ? styles.buttonEnabled : styles.buttonDisabled}>
             <IADLargeButton 
-              title={this.state.creatingNewAccount ? "Create Account" : "Login"}
+              title="Delete My Account"
               color="white" 
-              disabled={!(this.state.emailField.length > 3 && this.state.passwordField.length > 3)}
-              onPress={() => this.onProceedButtonPressed()}/>
+              disabled={!(this.state.emailField.length > 3 && this.state.passwordField.length > 3
+                && this.state.passwordVerifyField.length > 3 
+                && this.state.passwordField == this.state.passwordVerifyField)}
+              onPress={() => this.onDeleteButtonPressed()}/>
           </View>
         </View>
-
-        <Button title={this.state.creatingNewAccount ? 
-          "Log into an existing account" : "I don't have an account"}
-          onPress={() => this.onToggleCreateNewAccount()}/>
-        <View style={{ flex: 2 }}/>
       </KeyboardAwareScrollView>
     );
   }

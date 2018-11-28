@@ -5,6 +5,7 @@ import FindDateScreen from './app/screens/FindDateScreen';
 import ReviewDateScreen from './app/screens/ReviewDateScreen';
 import LocationSearchScreen from './app/screens/LocationSearchScreen';
 import AuthScreen from './app/screens/AuthScreen';
+import DeleteAccountScreen from './app/screens/DeleteAccountScreen';
 
 const RootStack = createStackNavigator(
   {
@@ -23,6 +24,9 @@ const RootStack = createStackNavigator(
     LocationSearch: {
       screen: LocationSearchScreen
     },
+    DeleteAccount: {
+      screen: DeleteAccountScreen
+    }
   },
   {
     initialRouteName: "Auth",
