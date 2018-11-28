@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import IADLargeButton from '../components/IADLargeButton';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import UserManager from '../models/UserManager';
 
@@ -79,6 +80,13 @@ const styles = StyleSheet.create({
 });
 
 export default class AuthScreen extends React.Component {
+  
+  static navigationOptions = {
+    headerRight: (
+      <Icon style={{paddingRight: 20 }} size={16} name='user-times' 
+          onPress={() => {}}/>
+    ),
+  };
 
   constructor(props){
     super(props);
@@ -168,7 +176,7 @@ export default class AuthScreen extends React.Component {
               multiline={false}
               numberOfLines={1}
               onChangeText={(text) => this.setState({ emailField: text })}
-              placeholder="Email or username"
+              placeholder="Email"
               value={this.state.emailField}
             />
           </View>

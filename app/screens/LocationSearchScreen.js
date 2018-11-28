@@ -177,7 +177,7 @@ export default class LocationSearchScreen extends React.Component {
             <View style={styles.formEntryContainer}>
               <View style={styles.formEntryTitleContainer}>
                 <Text style={styles.formEntryTitle}>{this.state.selectedResult["name"]}</Text>
-                <Icon style={styles.formEntryRightIcon} name='edit' 
+                <Icon style={styles.formEntryRightIcon} name='edit' size={14}
                   onPress={this.toggleSearchAndEditMode}/>
               </View>
               <Text style={styles.formEntryText}>{this.state.selectedResult["formatted_address"]}</Text>
