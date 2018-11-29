@@ -5,6 +5,8 @@ import IADTableView from '../components/IADTableView';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IADLargeButton from '../components/IADLargeButton';
 import PersistenceManager from '../models/PersistenceManager';
+import Date from '../models/Date';
+import UserManager from '../models/UserManager';
 
 const styles = StyleSheet.create({
   container: {
@@ -66,7 +68,7 @@ export default class ReviewDateScreen extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = { dateCity: null, dateComment: null, dateTitle: null, dateLocations: [], readyToSubmit: false };
+    this.state = { dateCity: null, dateComment: null, dateTitle: null, dateLineEntries: [], readyToSubmit: false };
     this.onPressAddLocation = this.onPressAddLocation.bind(this);
     this.onFinishAddLocation = this.onFinishAddLocation.bind(this);
     this.onFinishReview = this.onFinishReview.bind(this);
@@ -82,10 +84,10 @@ export default class ReviewDateScreen extends React.Component {
     );
   }
 
-  // Event handler for the LocationSearchScreen finishing and returning new location
-  onFinishAddLocation(location) {
+  // Event handler for the LocationSearchScreen finishing and returning new DLE
+  onFinishAddLocation(newEntry) {
     this.setState(prevState => ({
-      dateLocations: [...prevState.dateLocations, location]
+      dateLineEntries: [...prevState.dateLineEntries, newEntry]
     }))
   }
 
@@ -94,12 +96,13 @@ export default class ReviewDateScreen extends React.Component {
 
     // Ask PersistenceManager to save the Date review, await response
     PersistenceManager.getInstance().saveDate(
-      { 
-        dateTitle: this.state.dateTitle,
-        dateComment: this.state.dateComment,
-        dateCity: this.state.dateCity
-      }, 
-      this.state.dateLocations
+      new Date(
+        this.state.dateTitle,
+        this.state.dateComment,
+        this.state.dateCity,
+        this.state.dateLineEntries,
+        UserManager.getInstance().getUserID()
+      )
     ).then(() => {
       alert("Thank you for submitting your review!");
       this.props.navigation.goBack();
@@ -151,7 +154,7 @@ export default class ReviewDateScreen extends React.Component {
             <Icon style={styles.formEntryRightIcon} name='plus' size={14} 
               onPress={this.onPressAddLocation}/>
           </View>
-          <IADTableView data={this.state.dateLocations} objectKey="locationInfo"
+          <IADTableView data={this.state.dateLineEntries} objectKey="location"
             titleKey="name" subtitleKey="formatted_address" onRowSelect={_ => {}}/>
         </View>
         <View style={styles.formEntryContainer}>
@@ -171,7 +174,7 @@ export default class ReviewDateScreen extends React.Component {
           (this.state.dateComment && (this.state.dateComment.length > 3)
             && this.state.dateTitle && (this.state.dateTitle.length > 3)
             && this.state.dateCity && (this.state.dateCity.length > 3)
-            && this.state.dateLocations.length > 0) 
+            && this.state.dateLineEntries.length > 0) 
           ? styles.buttonEnabled : styles.buttonDisabled
         }
         >
@@ -179,7 +182,7 @@ export default class ReviewDateScreen extends React.Component {
             disabled={!(this.state.dateComment && (this.state.dateComment.length > 3)
               && this.state.dateTitle && (this.state.dateTitle.length > 3)
               && this.state.dateCity && (this.state.dateCity.length > 3)
-              && this.state.dateLocations.length > 0)}
+              && this.state.dateLineEntries.length > 0)}
             onPress={() => this.onFinishReview()}/>
         </View>
       </KeyboardAwareScrollView>

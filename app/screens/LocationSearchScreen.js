@@ -5,6 +5,8 @@ import IADTableView from '../components/IADTableView';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IADLargeButton from '../components/IADLargeButton';
+import DateLineEntry from '../models/DateLineEntry';
+import Location from '../models/Location';
 
 const styles = StyleSheet.create({
   container: {
@@ -145,11 +147,18 @@ export default class LocationSearchScreen extends React.Component {
 
   // Handler for pressing the Add to Date Review button
   onFinish() {
-    this.props.navigation.state.params.onFinish({
-      locationInfo: this.state.selectedResult,
-      locationUserRating: this.state.locationRating,
-      locationUserComment: this.state.locationComment,
-    });
+    this.props.navigation.state.params.onFinish(
+      new DateLineEntry(
+        new Location(
+          this.state.selectedResult.formatted_address,
+          this.state.selectedResult.name,
+          this.state.selectedResult.place_id,
+          this.state.selectedResult.rating,
+        ),
+        this.state.locationComment,
+        this.state.locationRating
+      )
+    );
     this.props.navigation.goBack();
   }
 
