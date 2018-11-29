@@ -1,11 +1,11 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation';
-import HomeScreen from './app/screens/HomeScreen';
-import FindDateScreen from './app/screens/FindDateScreen';
-import ReviewDateScreen from './app/screens/ReviewDateScreen';
-import LocationSearchScreen from './app/screens/LocationSearchScreen';
-import AuthScreen from './app/screens/AuthScreen';
-import DeleteAccountScreen from './app/screens/DeleteAccountScreen';
+import HomeScreen from './app/views/screens/HomeScreen';
+import FindDateScreen from './app/views/screens/FindDateScreen';
+import ReviewDateScreen from './app/views/screens/ReviewDateScreen';
+import LocationSearchScreen from './app/views/screens/LocationSearchScreen';
+import AuthScreen from './app/views/screens/AuthScreen';
+import DeleteAccountScreen from './app/views/screens/DeleteAccountScreen';
 
 const RootStack = createStackNavigator(
   {

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
+import { StyleSheet, Text, TextInput, View  } from 'react-native';
 import { SearchBar, Rating } from 'react-native-elements';
 import IADTableView from '../components/IADTableView';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IADLargeButton from '../components/IADLargeButton';
-import DateLineEntry from '../models/DateLineEntry';
-import Location from '../models/Location';
+import DateLineEntry from '../../models/DateLineEntry';
+import Location from '../../models/Location';
 
 const styles = StyleSheet.create({
   container: {

@@ -2,8 +2,7 @@ import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import IADLargeButton from '../components/IADLargeButton';
-import axios from 'axios';
-import UserManager from '../models/UserManager';
+import UserManager from '../../controllers/UserManager';
 
 const styles = StyleSheet.create({
   container: {

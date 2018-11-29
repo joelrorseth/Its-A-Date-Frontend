@@ -4,9 +4,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import IADTableView from '../components/IADTableView';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IADLargeButton from '../components/IADLargeButton';
-import PersistenceManager from '../models/PersistenceManager';
-import Date from '../models/Date';
-import UserManager from '../models/UserManager';
+import PersistenceManager from '../../controllers/PersistenceManager';
+import UserManager from '../../controllers/UserManager';
+import Date from '../../models/Date';
 
 const styles = StyleSheet.create({
   container: {
